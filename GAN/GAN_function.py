@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
+
 def get_max_dimensions(directory):
     max_width, max_height = 0, 0
     for filename in os.listdir(directory):
@@ -83,3 +84,5 @@ def average_image(train_data):
     plt.axis('off')  # Turn off the axis
     plt.title("Average Image of the Dataset")
     plt.show()
+
+
