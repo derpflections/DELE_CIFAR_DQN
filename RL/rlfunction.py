@@ -21,7 +21,8 @@ def env_viz(model, state_size, discrete_actions):
     frames = []
     reward_arr = []
     env = gym.make('Pendulum-v1', render_mode='rgb_array')
-    
+    sns.set_style();
+
     state = env.reset()
     if isinstance(state, tuple):
         state = state[0]
@@ -40,12 +41,15 @@ def env_viz(model, state_size, discrete_actions):
 
     env.close()
     ani = create_animation(frames)
-    print(f"Reward for test episode: {np.mean(reward_arr)}")
+    print(f"Average reward for test episode: {np.mean(reward_arr)}")
     return HTML(ani.to_jshtml())
 
 def plot_results(score_arr, name_arr, given_name):
     try:
         plt.figure(figsize=(20, 10))
+        sns.set(style="darkgrid", context="talk")
+        plt.style.use("dark_background")
+        plt.rcParams.update({"grid.linewidth":0.5, "grid.alpha":0.5})
         if len(score_arr) > 1:
             for scores, target_name in zip(score_arr, name_arr):
                 sns.lineplot(data = scores, label = target_name)
@@ -54,8 +58,8 @@ def plot_results(score_arr, name_arr, given_name):
         else:
             sns.lineplot(data = score_arr, label = given_name)
             plt.suptitle(f"Average Reward per Episode, using {given_name} model", fontsize=15, y = 0.92)
-        plt.xlim(0,300)
-        plt.ylim(None, 0)
+        plt.xlim(0, max(len(scores) for scores in score_arr))
+        plt.ylim(-16.2736044, 0)
         plt.show()
     except TypeError:
         print("Please input as a array.")
