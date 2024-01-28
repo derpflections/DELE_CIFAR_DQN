@@ -21,7 +21,6 @@ def env_viz(model, state_size, discrete_actions):
     frames = []
     reward_arr = []
     env = gym.make('Pendulum-v1', render_mode='rgb_array')
-    sns.set_style();
 
     state = env.reset()
     if isinstance(state, tuple):
@@ -50,19 +49,34 @@ def plot_results(score_arr, name_arr, given_name):
         sns.set(style="darkgrid", context="talk")
         plt.style.use("dark_background")
         plt.rcParams.update({"grid.linewidth":0.5, "grid.alpha":0.5})
+
+        # Plot for multiple sets of scores
         if len(score_arr) > 1:
             for scores, target_name in zip(score_arr, name_arr):
-                sns.lineplot(data = scores, label = target_name)
-            plt.suptitle(f"Comparing Average Reward per Episode per model", fontsize=15, y = 0.92)
+                sns.lineplot(data=scores, label=target_name)
+                # Calculate and plot best fit line
+                x = np.arange(len(scores))
+                slope, intercept = np.polyfit(x, scores, 1)
+                plt.plot(x, slope*x + intercept, linestyle='--', label=f'{target_name} Best Fit')
+                
+            plt.suptitle(f"Comparing Average Reward per Episode per model", fontsize=15, y=0.92)
             plt.legend()
+
+        # Plot for single set of scores
         else:
-            sns.lineplot(data = score_arr, label = given_name)
-            plt.suptitle(f"Average Reward per Episode, using {given_name} model", fontsize=15, y = 0.92)
+            sns.lineplot(data=score_arr, label=given_name)
+            # Calculate and plot best fit line
+            x = np.arange(len(score_arr[0]))
+            slope, intercept = np.polyfit(x, score_arr[0], 1)
+            plt.plot(x, slope*x + intercept, linestyle='--', label=f'{given_name} Best Fit')
+
+            plt.suptitle(f"Average Reward per Episode, using {given_name} model", fontsize=15, y=0.92)
+        
         plt.xlim(0, max(len(scores) for scores in score_arr))
         plt.ylim(-16.2736044, 0)
         plt.show()
-    except TypeError:
-        print("Please input as a array.")
 
+    except TypeError:
+        print("Please input as an array.")
 def test():
     print("hello world")
