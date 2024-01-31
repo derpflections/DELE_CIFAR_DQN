@@ -40,7 +40,7 @@ def env_viz(model, state_size, discrete_actions):
 
     env.close()
     ani = create_animation(frames)
-    print(f"\nAverage reward for test episode: {np.mean(reward_arr)}")
+    print(f"Average reward for test episode: {np.mean(reward_arr)}")
     return HTML(ani.to_jshtml())
 
 def plot_results(score_arr, name_arr, given_name):
