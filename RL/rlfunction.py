@@ -43,7 +43,13 @@ def env_viz(model, state_size, discrete_actions):
     print(f"Average reward for test episode: {np.mean(reward_arr)}")
     return HTML(ani.to_jshtml())
 
-def plot_results(score_arr, name_arr, given_name):
+def moving_average(data, window_size):
+    return np.convolve(data, np.ones(window_size)/window_size, mode='valid')\
+    
+def std_var(input_arr):
+    return np.std(input_arr), np.var(input_arr)
+
+def plot_results(score_arr, name_arr, given_name, window_size=10):
     try:
         plt.figure(figsize=(20, 10))
         sns.set(style="darkgrid", context="talk")
@@ -54,29 +60,27 @@ def plot_results(score_arr, name_arr, given_name):
         if len(score_arr) > 1:
             for scores, target_name in zip(score_arr, name_arr):
                 sns.lineplot(data=scores, label=target_name)
-                # Calculate and plot best fit line
-                x = np.arange(len(scores))
-                slope, intercept = np.polyfit(x, scores, 1)
-                plt.plot(x, slope*x + intercept, linestyle='--', label=f'{target_name} Best Fit')
-                
+                std, var = std_var(scores)
+                # Calculate and plot moving average
+                ma = moving_average(scores, window_size)
+                x_ma = np.arange(window_size-1, len(scores))
+                plt.plot(x_ma, ma, linestyle='--', label=f'{target_name} Moving Avg')
+
             plt.suptitle(f"Comparing Average Reward per Episode per model", fontsize=15, y=0.92)
             plt.legend()
-
-        # Plot for single set of scores
         else:
-            sns.lineplot(data=score_arr, label=given_name)
-            # Calculate and plot best fit line
-            x = np.arange(len(score_arr[0]))
-            slope, intercept = np.polyfit(x, score_arr[0], 1)
-            plt.plot(x, slope*x + intercept, linestyle='--', label=f'{given_name} Best Fit')
-
+            sns.lineplot(data=score_arr[0], label=given_name)
+            std, var = std_var(score_arr[0])
+            ma = moving_average(score_arr[0], window_size)
+            x_ma = np.arange(window_size-1, len(score_arr[0]))
+            plt.plot(x_ma, ma, linestyle='--', label=f'{given_name} Moving Avg')
             plt.suptitle(f"Average Reward per Episode, using {given_name} model", fontsize=15, y=0.92)
-        
+            print(f"\nStandard Deviation: {std}, Variance: {var}")
+
         plt.xlim(0, max(len(scores) for scores in score_arr))
         plt.ylim(-16.2736044, 0)
         plt.show()
-
     except TypeError:
         print("Please input as an array.")
-def test():
-    print("hello world")
+
+
