@@ -51,7 +51,7 @@ def std_var(input_arr):
 
 def plot_results(score_arr, name_arr, given_name, window_size=10):
     try:
-        plt.figure(figsize=(20, 10))
+        plt.figure(figsize=(40, 20))
         sns.set(style="darkgrid", context="talk")
         plt.style.use("dark_background")
         plt.rcParams.update({"grid.linewidth":0.5, "grid.alpha":0.5})
@@ -59,7 +59,7 @@ def plot_results(score_arr, name_arr, given_name, window_size=10):
         # Plot for multiple sets of scores
         if len(score_arr) > 1:
             for scores, target_name in zip(score_arr, name_arr):
-                sns.lineplot(data=scores, label=target_name, alpha = 0.5)
+                sns.lineplot(data=scores, label=target_name, alpha = 0.2)
                 std, var = std_var(scores)
                 # Calculate and plot moving average
                 ma = moving_average(scores, window_size)
