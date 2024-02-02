@@ -40,7 +40,7 @@ def env_viz(model, state_size, discrete_actions):
 
     env.close()
     ani = create_animation(frames)
-    print(f"Average reward for test episode: {np.mean(reward_arr)}")
+    print(f"\nAverage reward for test episode: {np.mean(reward_arr)}")
     return HTML(ani.to_jshtml())
 
 def moving_average(data, window_size):
@@ -59,7 +59,7 @@ def plot_results(score_arr, name_arr, given_name, window_size=10):
         # Plot for multiple sets of scores
         if len(score_arr) > 1:
             for scores, target_name in zip(score_arr, name_arr):
-                sns.lineplot(data=scores, label=target_name)
+                sns.lineplot(data=scores, label=target_name, alpha = 0.5)
                 std, var = std_var(scores)
                 # Calculate and plot moving average
                 ma = moving_average(scores, window_size)
